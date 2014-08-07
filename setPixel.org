@@ -14,7 +14,7 @@ want to do that in isolation. It would be great to see how our
 algorithms play out. Therefore we our going creating a stage.
 
 #+name: dream-code.setting-stage
-#+begin_src js :exports code :tangle now
+#+begin_src js :exports code :tangle no
 var stage = new Stage(640, 480);
 stage.appendTo(document.getElementById('container'));
 
@@ -23,3 +23,44 @@ stage.setPixel(0,0);
 
 The above code is how we would want to create a new stage and set a
 pixel.
+
+* Appendix
+** Bower
+
+We want to use [[http://bower.io/][bower]] to manage our external dependencies. But because
+this is a self contained org-mode document. we have to generated the
+=bower.json= file.
+
+#+begin_src json :exports code :tangle bower.json :padline no
+{
+  "name": "setPixel",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dvberkel/setPixel",
+  "authors": [
+    "Daan van Berkel <daan.v.berkel.1980@gmail.com>"
+  ],
+  "description": "an exploration into graphics algorithms starting from the primitive setPixel",
+  "main": "setPixel.html",
+  "keywords": [
+    "setPixel"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jasmine": "~2.0.1"
+  }
+}
+#+end_src
+
+After tangling the document one can run the install command.
+
+#+begin_src sh :tangle no :exports code :results silent
+bower install
+#+end_src

@@ -64,3 +64,32 @@ After tangling the document one can run the install command.
 #+begin_src sh :tangle no :exports code :results silent
 bower install
 #+end_src
+
+** Test Suite
+
+We are using [[http://jasmine.github.io/2.0/introduction.html][Jasmine]] to test our code. The exported html document
+should run the test suit. We therefor include the Jasmine runner in
+our document.
+
+#+begin_html
+<link rel="stylesheet" type="text/css" href="bower_components/jasmine/lib/jasmine-core/jasmine.css">
+
+<script type="text/javascript" src="bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+<script type="text/javascript" src="bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+<script type="text/javascript" src="bower_components/jasmine/lib/jasmine-core/boot.js"></script>
+
+<!-- include source files here... -->
+
+<!-- include spec files here... -->
+<script type="text/javascript" src="spec/SetupSpec.js"></script>
+#+end_html
+
+We also create a =SetupSpec.js= to make sure this works correctly.
+
+#+begin_src js :exports code :tangle spec/SetupSpec.js :mkdirp yes
+  describe('Jasmine Project', function(){
+      it('should run specification', function(){
+          expect(true).toBeTruthy();
+      });
+  });
+#+end_src

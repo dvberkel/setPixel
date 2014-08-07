@@ -1,0 +1,8 @@
+#+title setPixel
+#+author Daan van Berkel
+#+email daan.v.berkel.1980+setpixel@gmail.com
+
+* If All You Got Is =setPixel=
+
+This document is an exploration into graphics algorithms starting
+with the primitive =setPixel=.

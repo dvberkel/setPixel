@@ -6,3 +6,20 @@
 
 This document is an exploration into graphics algorithms starting
 with the primitive =setPixel=.
+
+* Setting the stage
+
+We would like to explore various graphics algorithms, but we do not
+want to do that in isolation. It would be great to see how our
+algorithms play out. Therefore we our going creating a stage.
+
+#+name: dream-code.setting-stage
+#+begin_src js :exports code :tangle now
+var stage = new Stage(640, 480);
+stage.appendTo(document.getElementById('container'));
+
+stage.setPixel(0,0);
+#+end_src
+
+The above code is how we would want to create a new stage and set a
+pixel.

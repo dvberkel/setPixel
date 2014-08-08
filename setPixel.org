@@ -24,6 +24,64 @@ stage.setPixel(0,0);
 The above code is how we would want to create a new stage and set a
 pixel.
 
+** Making dreams come true
+
+The code above is dream code. It does not exist as of yet. So let's
+get started and make our dreams come true.
+
+Because we want our code to be well tested we are going to set up a
+specification for our stage.
+
+We first make sure that =Stage= exists. It is a helpfull indicator
+when things go wrong.
+
+#+name: spec.stage.exists
+#+begin_src js :exports code :tangle no
+it('must exist', function(){
+    expect(Stage).toBeDefined();
+});
+#+end_src
+
+We also want to make sure that =Stage= is a constructor.
+
+#+name: spec.stage.is_constructor
+#+begin_src js :exports code :tangle no
+it('must be an constructor', function(){
+    expect(typeof Stage).toBe('function');
+});
+#+end_src
+
+This can be realized in the following way.
+
+#+name: stage.constructor
+#+begin_src js :exports code :tangle no
+  var Stage = function(width, height){
+      this.width = width;
+      this.heigth = height;
+  }
+#+end_src
+
+To put it all together we wrap it around an immediatly evaluated
+anonymous function to prevent global namespace pollution.
+
+#+name: stage
+#+begin_src js :exports code :tangle js/Stage.js :mkdirp :noweb yes
+(function($){
+    <<stage.constructor>>
+
+    $.Stage = Stage;
+})(window);
+#+end_src
+
+In case you are wondering the entire specification looks like
+
+#+begin_src js :exports code :tangle spec/StageSpec.js :mkdirp :noweb yes
+describe('Stage', function(){
+    <<spec.stage.exists>>
+    <<spec.stage.is_constructor>>
+});
+#+end_src
+
 * Appendix
 ** Bower
 
@@ -79,9 +137,11 @@ our document.
 <script type="text/javascript" src="bower_components/jasmine/lib/jasmine-core/boot.js"></script>
 
 <!-- include source files here... -->
+<script type="text/javascript" src="js/Stage.js"></script>
 
 <!-- include spec files here... -->
 <script type="text/javascript" src="spec/SetupSpec.js"></script>
+<script type="text/javascript" src="spec/StageSpec.js"></script>
 #+end_html
 
 We also create a =SetupSpec.js= to make sure this works correctly.

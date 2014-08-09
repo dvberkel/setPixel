@@ -61,26 +61,93 @@ This can be realized in the following way.
   }
 #+end_src
 
+That leaves the methods =appendTo= and =setPixel=. Let's first look
+into the =appendTo= method
+
+We want the =appendTo= method to create a =canvas= element in the dom
+element that is passed as a parameter. Lets make a specification.
+
+#+name: spec.stage.appendTo.creates_canvas
+#+begin_src js :exports code :tangle no
+  it('must create a canvas in the container', function(){
+      var stage = new Stage(640, 480);
+
+      stage.appendTo(container);
+
+      expect(container.getElementsByTagName('canvas').length).toBe(1);
+  });
+#+end_src
+
+it uses a =container= that is created before each test.
+
+#+name: spec.stage.appendTo.setup_teardown
+#+begin_src js :exports code :tangle no
+  var container;
+  beforeEach(function(){
+      container = document.createElement('div');
+  });
+#+end_src
+
+We now need to provide an implementation for that specification.
+
+We first need to create a =canvas= and add it to the =container=.
+
+#+name: stage.appendTo.create_canvas
+#+begin_src js :exports code :tangle no
+  var canvas = document.createElement('canvas');
+  container.appendChild(canvas);
+#+end_src
+
+Next we want to save the =context= of the =canvas= we just created
+and store if for when we need to draw on it. Because the same stage
+could be added to various different containers we store the contexts
+in a array.
+
+#+name: stage.appendTo.store_context
+#+begin_src js :exports code :tangle no
+  if (!this.contexts) {
+      this.contexts = [];
+  }
+  this.contexts.push(canvas.getContext('2d'));
+
+#+end_src
+
+#+name: stage.appendTo
+#+begin_src js :exports code :tangle no :noweb yes
+  Stage.prototype.appendTo = function(container){
+      <<stage.appendTo.create_canvas>>
+      <<stage.appendTo.store_context>>
+  }
+#+end_src
+
 To put it all together we wrap it around an immediatly evaluated
 anonymous function to prevent global namespace pollution.
 
 #+name: stage
 #+begin_src js :exports code :tangle js/Stage.js :mkdirp :noweb yes
-(function($){
-    <<stage.constructor>>
+  (function($){
+      <<stage.constructor>>
 
-    $.Stage = Stage;
-})(window);
+      <<stage.appendTo>>
+
+      $.Stage = Stage;
+  })(window);
 #+end_src
 
 In case you are wondering the entire specification looks like
 
 #+begin_src js :exports code :tangle spec/StageSpec.js :mkdirp :noweb yes
-describe('Stage', function(){
-    <<spec.stage.exists>>
-    <<spec.stage.is_constructor>>
-});
+  describe('Stage', function(){
+      <<spec.stage.exists>>
+      <<spec.stage.is_constructor>>
+
+      describe('appendTo', function(){
+          <<spec.stage.appendTo.setup_teardown>>
+          <<spec.stage.appendTo.creates_canvas>>
+      });
+  });
 #+end_src
+
 
 * Appendix
 ** Bower

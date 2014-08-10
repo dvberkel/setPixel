@@ -130,12 +130,44 @@ in a array.
   this.contexts.push(canvas.getContext('2d'));
 #+end_src
 
+The two steps together make up the implementation of the =appendTo=
+method.
+
 #+name: stage.appendTo
 #+begin_src js :exports code :tangle no :noweb yes
   Stage.prototype.appendTo = function(container){
       <<stage.appendTo.create_canvas>>
       <<stage.appendTo.store_context>>
   }
+#+end_src
+
+Next up is the =setPixel= method.
+
+For each context that is known we want to set a pixel. The =canvas=
+API does not provides setting individual pixels. So we are simulating
+it by filling a rectangle.
+
+#+name: stage.setPixel.fillRect
+#+begin_src js :exports code :tangle no
+  ctx.fillRect(x, y, 1, 1);
+#+end_src js
+
+The =ctx= variable is set to a known =context= in the following loop.
+
+#+name: stage.setPixel.forEach
+#+begin_src js :exports code :tangle no :noweb yes
+  this.contexts.forEach(function(ctx){
+      <<stage.setPixel.fillRect>>
+  });
+#+end_src
+
+So the entire method looks like
+
+#+name: stage.setPixel
+#+begin_src js :exports code :tangle no :noweb yes
+  Stage.prototype.setPixel = function(x, y) {
+      <<stage.setPixel.forEach>>
+  };
 #+end_src
 
 To put it all together we wrap it around an immediatly evaluated
@@ -147,6 +179,8 @@ anonymous function to prevent global namespace pollution.
       <<stage.constructor>>
 
       <<stage.appendTo>>
+
+      <<stage.setPixel>>
 
       $.Stage = Stage;
   })(window);
@@ -176,8 +210,10 @@ So what can we do with a stage. Let's find out.
 
 #+name: first-appearance
 #+begin_src js :exports code :tangle js/examples/first-appearance.js :mkdirp
-var stage = new Stage(320, 240);
-stage.appendTo(document.getElementById('first-appearance'));
+  var stage = new Stage(320, 240);
+  stage.appendTo(document.getElementById('first-appearance'));
+
+  stage.setPixel(0,0);
 #+end_src
 
 * Appendix

@@ -57,7 +57,7 @@ This can be realized in the following way.
 #+begin_src js :exports code :tangle no
   var Stage = function(width, height){
       this.width = width;
-      this.heigth = height;
+      this.height = height;
   }
 #+end_src
 
@@ -88,18 +88,37 @@ it uses a =container= that is created before each test.
   });
 #+end_src
 
+We also want to make sure that the =canvas= dimensions are set
+correctly.
+
+#+name: spec.stage.appendTo.canvas_dimensions
+#+begin_src js :exports code :tangle no
+  it('must set the canvas dimension', function(){
+      var stage = new Stage(320, 240);
+
+      stage.appendTo(container);
+      var c = container.getElementsByTagName('canvas')[0];
+
+      expect(c.width).toBe(320);
+      expect(c.height).toBe(240);
+  });
+#+end_src
+
 We now need to provide an implementation for that specification.
 
-We first need to create a =canvas= and add it to the =container=.
+We first need to create a =canvas=, set it's =width= and =height= and
+add it to the =container=.
 
 #+name: stage.appendTo.create_canvas
 #+begin_src js :exports code :tangle no
   var canvas = document.createElement('canvas');
+  canvas.width = this.width;
+  canvas.height = this.height;
   container.appendChild(canvas);
 #+end_src
 
 Next we want to save the =context= of the =canvas= we just created
-and store if for when we need to draw on it. Because the same stage
+and store it for when we need to draw on it. Because the same stage
 could be added to various different containers we store the contexts
 in a array.
 
@@ -109,7 +128,6 @@ in a array.
       this.contexts = [];
   }
   this.contexts.push(canvas.getContext('2d'));
-
 #+end_src
 
 #+name: stage.appendTo
@@ -144,6 +162,7 @@ In case you are wondering the entire specification looks like
       describe('appendTo', function(){
           <<spec.stage.appendTo.setup_teardown>>
           <<spec.stage.appendTo.creates_canvas>>
+          <<spec.stage.appendTo.canvas_dimensions>>
       });
   });
 #+end_src

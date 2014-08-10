@@ -2,11 +2,9 @@
 #+author Daan van Berkel
 #+email daan.v.berkel.1980+setpixel@gmail.com
 
-Set Pixel
+#+style: <link rel="stylesheet" type="text/css" href="css/setPixel.css">
 
-#+begin_html
-<link rel="stylesheet" type="text/css" href="css/setPixel.css">
-#+end_html
+Set Pixel
 
 * If All You Got Is =setPixel=
 

@@ -148,6 +148,18 @@ In case you are wondering the entire specification looks like
   });
 #+end_src
 
+** Living the dream
+So what can we do with a stage. Let's find out.
+
+#+begin_html
+<div id='first-appearance'></div>
+#+end_html
+
+#+name: first-appearance
+#+begin_src js :exports code :tangle js/examples/first-appearance.js :mkdirp
+var stage = new Stage(320, 240);
+stage.appendTo(document.getElementById('first-appearance'));
+#+end_src
 
 * Appendix
 ** Bower
@@ -220,3 +232,11 @@ We also create a =SetupSpec.js= to make sure this works correctly.
       });
   });
 #+end_src
+** Running examples
+
+The examples in this document should be loaded as well. This is
+achieved with a verbatim html block.
+
+#+begin_html
+<script type="text/javascript" src="js/examples/first-appearance.js"></script>
+#+end_html

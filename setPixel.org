@@ -59,7 +59,7 @@ it('must be an constructor', function(){
 
 This can be realized in the following way.
 
-n#+name: stage.constructor
+#+name: stage.constructor
 #+begin_src js :exports code :tangle no
   var Stage = function(width, height){
       this.width = width;
@@ -211,7 +211,7 @@ In case you are wondering the entire specification looks like
 So what can we do with a stage. Let's find out.
 
 #+begin_html
-<div id='first-appearance'></div>
+<div id='first-appearance' class='example'></div>
 #+end_html
 
 #+name: first-appearance
@@ -303,6 +303,13 @@ customize it with the following cascading style sheets.
       width: 1024px;
       margin-left: auto;
       margin-right: auto;
+  }
+
+  .example canvas {
+      background: white;
+      border-style: solid;
+      border-width: 1px;
+      border-color: red;
   }
 #+end_src
 

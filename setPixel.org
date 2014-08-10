@@ -2,6 +2,12 @@
 #+author Daan van Berkel
 #+email daan.v.berkel.1980+setpixel@gmail.com
 
+Set Pixel
+
+#+begin_html
+<link rel="stylesheet" type="text/css" href="css/setPixel.css">
+#+end_html
+
 * If All You Got Is =setPixel=
 
 This document is an exploration into graphics algorithms starting
@@ -53,7 +59,7 @@ it('must be an constructor', function(){
 
 This can be realized in the following way.
 
-#+name: stage.constructor
+n#+name: stage.constructor
 #+begin_src js :exports code :tangle no
   var Stage = function(width, height){
       this.width = width;
@@ -287,6 +293,19 @@ We also create a =SetupSpec.js= to make sure this works correctly.
       });
   });
 #+end_src
+** Styling the document
+
+The default style for the exported document is... default. We
+customize it with the following cascading style sheets.
+
+#+begin_src css :exports code :tangle css/setPixel.css :mkdirp
+  body {
+      width: 1024px;
+      margin-left: auto;
+      margin-right: auto;
+  }
+#+end_src
+
 ** Running examples
 
 The examples in this document should be loaded as well. This is

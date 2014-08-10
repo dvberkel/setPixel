@@ -303,11 +303,19 @@ customize it with the following cascading style sheets.
       margin-right: auto;
   }
 
+  .example {
+      float: right;
+  }
+
   .example canvas {
       background: white;
       border-style: solid;
       border-width: 1px;
       border-color: red;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+      clear: right;
   }
 #+end_src
 

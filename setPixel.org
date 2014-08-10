@@ -15,7 +15,7 @@ with the primitive =setPixel=.
 
 We would like to explore various graphics algorithms, but we do not
 want to do that in isolation. It would be great to see how our
-algorithms play out. Therefore we our going creating a stage.
+algorithms play out. Therefore we our going to create a stage.
 
 #+name: dream-code.setting-stage
 #+begin_src js :exports code :tangle no
@@ -50,7 +50,7 @@ We also want to make sure that =Stage= is a constructor.
 
 #+name: spec.stage.is_constructor
 #+begin_src js :exports code :tangle no
-it('must be an constructor', function(){
+it('must be a constructor', function(){
     expect(typeof Stage).toBe('function');
 });
 #+end_src
@@ -66,7 +66,7 @@ This can be realized in the following way.
 #+end_src
 
 That leaves the methods =appendTo= and =setPixel=. Let's first look
-into the =appendTo= method
+into the =appendTo= method.
 
 We want the =appendTo= method to create a =canvas= element in the dom
 element that is passed as a parameter. Lets make a specification.
@@ -97,7 +97,7 @@ correctly.
 
 #+name: spec.stage.appendTo.canvas_dimensions
 #+begin_src js :exports code :tangle no
-  it('must set the canvas dimension', function(){
+  it('must set the canvas dimensions', function(){
       var stage = new Stage(320, 240);
 
       stage.appendTo(container);
@@ -122,9 +122,8 @@ add it to the =container=.
 #+end_src
 
 Next we want to save the =context= of the =canvas= we just created
-and store it for when we need to draw on it. Because the same stage
-could be added to various different containers we store the contexts
-in a array.
+and store it. Because the same =stage= could be added to various
+different containers we store the =context=s in an array.
 
 #+name: stage.appendTo.store_context
 #+begin_src js :exports code :tangle no
@@ -148,8 +147,8 @@ method.
 Next up is the =setPixel= method.
 
 For each context that is known we want to set a pixel. The =canvas=
-API does not provides setting individual pixels. So we are simulating
-it by filling a rectangle.
+API does not provide setting individual pixels. So we are filling a
+1x1 rectangle.
 
 #+name: stage.setPixel.fillRect
 #+begin_src js :exports code :tangle no
@@ -195,21 +194,24 @@ In case you are wondering the entire specification looks like
 #+begin_src js :exports code :tangle spec/StageSpec.js :mkdirp :noweb yes
   describe('Stage', function(){
       <<spec.stage.exists>>
+
       <<spec.stage.is_constructor>>
 
       describe('appendTo', function(){
           <<spec.stage.appendTo.setup_teardown>>
+
           <<spec.stage.appendTo.creates_canvas>>
+
           <<spec.stage.appendTo.canvas_dimensions>>
       });
   });
 #+end_src
 
 ** Living the dream
-So what can we do with a stage. Let's find out.
+So can we live our dream? Let's find out.
 
 #+begin_html
-<div id='first-appearance' class='example'></div>
+<div id='first-appearance' class='setPixel-example'></div>
 #+end_html
 
 #+name: first-appearance
@@ -219,6 +221,9 @@ So what can we do with a stage. Let's find out.
 
   stage.setPixel(0,0);
 #+end_src
+
+With the stage setup we are al ready to explore what is needed to
+create more drawing primitives from =setPixel=.
 
 * Appendix
 ** Bower
@@ -286,7 +291,7 @@ We also create a =SetupSpec.js= to make sure this works correctly.
 
 #+begin_src js :exports code :tangle spec/SetupSpec.js :mkdirp yes
   describe('Jasmine Project', function(){
-      it('should run specification', function(){
+      it('must run specifications', function(){
           expect(true).toBeTruthy();
       });
   });
@@ -303,11 +308,11 @@ customize it with the following cascading style sheets.
       margin-right: auto;
   }
 
-  .example {
+  .setPixel-example {
       float: right;
   }
 
-  .example canvas {
+  .setPixel-example canvas {
       background: white;
       border-style: solid;
       border-width: 1px;

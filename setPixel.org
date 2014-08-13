@@ -322,6 +322,43 @@ So can we live our dream? Let's find out.
 With the stage setup we are al ready to explore what is needed to
 create more drawing primitives from =setPixel=.
 
+* Drawing a line
+The first primitive that we will build on top of =setPixel= is
+=line=. Because dreaming paid of handsomely earlier, let's start with
+that.
+
+When given a =Stage= ideally we would want to be able to draw a
+line. E.g. a line between points with coordinates $(0, 0)$ and $(20,
+10)$.
+
+#+name: dream-code.line
+#+begin_src js :exports code :tangle no
+stage.setLine(0,0, 20,10);
+#+end_src
+
+We can create a specification that =Stage= responds to =line=.
+
+#+name: spec.stage.responds_to_line
+#+begin_src js :exports code :tangle no
+  it('must respond to \'line\'', function(){
+      var stage = new Stage(20, 20);
+
+      expect(stage.line).toBeDefined();
+      expect(typeof stage.line).toBe('function');
+  });
+#+end_src
+
+So far so good. But what do we expect from this call?
+
+The entire =line= specification.
+
+#+name: spec.stage.line
+#+begin_src js :exports code :tangle spec/lineSpec.js :noweb yes
+  describe('stage', function(){
+      <<spec.stage.responds_to_line>>
+  });
+#+end_src
+
 * Appendix
 ** Bower
 
@@ -382,6 +419,7 @@ our document.
 <!-- include spec files here... -->
 <script type="text/javascript" src="spec/SetupSpec.js"></script>
 <script type="text/javascript" src="spec/StageSpec.js"></script>
+<script type="text/javascript" src="spec/lineSpec.js"></script>
 #+end_html
 
 We also create a =SetupSpec.js= to make sure this works correctly.

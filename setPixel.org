@@ -99,7 +99,7 @@ element that is passed as a parameter. Lets make a specification.
 
 it uses a =container= that is created before each test.
 
-#+name: spec.stage.appendTo.setup_teardown
+#+name: spec.stage.setup_teardown
 #+begin_src js :exports code :tangle no
   var container;
   beforeEach(function(){
@@ -284,6 +284,8 @@ In case you are wondering the entire specification looks like
 
 #+begin_src js :exports code :tangle spec/StageSpec.js :mkdirp :noweb yes
   describe('Stage', function(){
+      <<spec.stage.setup_teardown>>
+
       <<spec.stage.exists>>
 
       <<spec.stage.is_constructor>>
@@ -291,16 +293,12 @@ In case you are wondering the entire specification looks like
       <<spec.stage.options>>
 
       describe('appendTo', function(){
-          <<spec.stage.appendTo.setup_teardown>>
-
           <<spec.stage.appendTo.creates_canvas>>
 
           <<spec.stage.appendTo.canvas_dimensions>>
       });
 
       describe('setPixel', function(){
-          <<spec.stage.appendTo.setup_teardown>>
-
           <<spec.stage.setPixel>>
       });
   });

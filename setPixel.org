@@ -55,13 +55,28 @@ it('must be a constructor', function(){
 });
 #+end_src
 
+For good measure we also want to be able to set the scale of the
+pixel. When we want to know the details of an algorithm it would be
+nice to blow up the pixels. Let's control that with an options hash.
+
+#+name: spec.stage.options
+#+begin_src js :exports code :tangle no
+  it('must allow an options hash with \'scale\'', function(){
+      var stage = new Stage(4, 3, { 'scale': 80 });
+
+      expect(stage.scale).toBe(80);
+  });
+#+end_src
+
 This can be realized in the following way.
 
 #+name: stage.constructor
 #+begin_src js :exports code :tangle no
-  var Stage = function(width, height){
+  var Stage = function(width, height, options){
+      options = options || { 'scale': 1 };
       this.width = width;
       this.height = height;
+      this.scale = options.scale || 1;
   }
 #+end_src
 
@@ -108,16 +123,31 @@ correctly.
   });
 #+end_src
 
+Even when the scale option is involved
+
+#+name: spec.stage.appendTo.canvas_dimensions_with_scale
+#+begin_src js :exports code :tangle no
+  it('must set the canvas dimensions', function(){
+      var stage = new Stage(4, 3, { 'scale': 80 });
+
+      stage.appendTo(container);
+      var c = container.getElementsByTagName('canvas')[0];
+
+      expect(c.width).toBe(320);
+      expect(c.height).toBe(240);
+  });
+#+end_src
+
 We now need to provide an implementation for that specification.
 
-We first need to create a =canvas=, set it's =width= and =height= and
-add it to the =container=.
+We first need to create a =canvas=, set it's =width= and =height=,
+factoring in the scale and add it to the =container=.
 
 #+name: stage.appendTo.create_canvas
 #+begin_src js :exports code :tangle no
   var canvas = document.createElement('canvas');
-  canvas.width = this.width;
-  canvas.height = this.height;
+  canvas.width = this.width * this.scale;
+  canvas.height = this.height * this.scale;
   container.appendChild(canvas);
 #+end_src
 
@@ -191,6 +221,7 @@ listed in that order.
   expect(image.data[3]).toBe(255);
 #+end_src
 
+Which sums up to
 
 #+name: spec.stage.setPixel
 #+begin_src js :exports code :tangle no :noweb yes
@@ -204,13 +235,13 @@ listed in that order.
   });
 #+end_src
 
-For each context that is known we want to set a pixel. The =canvas=
-API does not provide setting individual pixels. So we are filling a
-1x1 rectangle.
+Now for the implementation. For each context that is known we want to
+set a pixel. The =canvas= API does not provide setting individual
+pixels. So we are filling a square of the correct size.
 
 #+name: stage.setPixel.fillRect
 #+begin_src js :exports code :tangle no
-  ctx.fillRect(x, y, 1, 1);
+  ctx.fillRect(x * this.scale, y * this.scale, this.scale, this.scale);
 #+end_src js
 
 The =ctx= variable is set to a known =context= in the following loop.
@@ -219,10 +250,12 @@ The =ctx= variable is set to a known =context= in the following loop.
 #+begin_src js :exports code :tangle no :noweb yes
   this.contexts.forEach(function(ctx){
       <<stage.setPixel.fillRect>>
-  });
+  }, this);
 #+end_src
 
-So the entire method looks like
+Note that we need to pass along the =stage= to the =forEach=
+loop. Otherwise the context would =undefined= and the =scale= would
+not be retrieved correctly. So the entire method looks like
 
 #+name: stage.setPixel
 #+begin_src js :exports code :tangle no :noweb yes
@@ -255,6 +288,8 @@ In case you are wondering the entire specification looks like
 
       <<spec.stage.is_constructor>>
 
+      <<spec.stage.options>>
+
       describe('appendTo', function(){
           <<spec.stage.appendTo.setup_teardown>>
 
@@ -280,7 +315,7 @@ So can we live our dream? Let's find out.
 
 #+name: first-appearance
 #+begin_src js :exports code :tangle js/examples/first-appearance.js :mkdirp
-  var stage = new Stage(320, 240);
+  var stage = new Stage(4, 3, { 'scale': 80 });
   stage.appendTo(document.getElementById('first-appearance'));
 
   stage.setPixel(0,0);

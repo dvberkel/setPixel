@@ -239,9 +239,12 @@ Now for the implementation. For each context that is known we want to
 set a pixel. The =canvas= API does not provide setting individual
 pixels. So we are filling a square of the correct size.
 
+To make sure we always paint on pixel barriers we are flooring our
+argument values.
+
 #+name: stage.setPixel.fillRect
 #+begin_src js :exports code :tangle no
-  ctx.fillRect(x * this.scale, y * this.scale, this.scale, this.scale);
+  ctx.fillRect(Math.floor(x) * this.scale, Math.floor(y) * this.scale, this.scale, this.scale);
 #+end_src js
 
 The =ctx= variable is set to a known =context= in the following loop.
@@ -268,7 +271,7 @@ To put it all together we wrap it around an immediatly evaluated
 anonymous function to prevent global namespace pollution.
 
 #+name: stage
-#+begin_src js :exports code :tangle js/Stage.js :mkdirp :noweb yes
+#+begin_src js :exports code :tangle js/Stage.js :mkdirp yes :noweb yes
   (function($){
       <<stage.constructor>>
 
@@ -282,7 +285,7 @@ anonymous function to prevent global namespace pollution.
 
 In case you are wondering the entire specification looks like
 
-#+begin_src js :exports code :tangle spec/StageSpec.js :mkdirp :noweb yes
+#+begin_src js :exports code :tangle spec/StageSpec.js :mkdirp yes :noweb yes
   describe('Stage', function(){
       <<spec.stage.setup_teardown>>
 
@@ -312,7 +315,7 @@ So can we live our dream? Let's find out.
 #+end_html
 
 #+name: first-appearance
-#+begin_src js :exports code :tangle js/examples/first-appearance.js :mkdirp
+#+begin_src js :exports code :tangle js/examples/first-appearance.js :mkdirp yes
   var stage = new Stage(4, 3, { 'scale': 80 });
   stage.appendTo(document.getElementById('first-appearance'));
 
@@ -333,7 +336,7 @@ line. E.g. a line between points with coordinates $(0, 0)$ and $(20,
 
 #+name: dream-code.line
 #+begin_src js :exports code :tangle no
-stage.setLine(0,0, 20,10);
+stage.line(0,0, 20,10);
 #+end_src
 
 We can create a specification that =Stage= responds to =line=.
@@ -349,6 +352,69 @@ We can create a specification that =Stage= responds to =line=.
 #+end_src
 
 So far so good. But what do we expect from this call?
+
+** Naive line drawing
+
+A naive implementation would be
+
+#+name: line.naive
+#+begin_src js :exports code :tangle no :noweb yes
+  function naive(x0, y0, x1, y1) {
+      if (x0 > x1) {
+          var tmp = x1;
+          x1 = x0; x0 = tmp;
+          tmp = y1;
+          y1 = x0; y0 = tmp;
+      }
+
+      dx = x1 - x0;
+      dy = y1 - y0;
+
+      for (var x = x0; x <= x1; x++) {
+          var y = y0 + dy * x/dx;
+          this.setPixel(x, y);
+      }
+  }
+#+end_src
+
+With the following result
+
+#+begin_html
+<div id='naive-line' class='setPixel-example'></div>
+#+end_html
+
+#+name: naive-line
+#+begin_src js :exports code :tangle js/examples/naive-line.js :mkdirp yes
+  var stage = new Stage(10, 30, { 'scale': 25 });
+  stage.appendTo(document.getElementById('naive-line'));
+
+  stage.line(0,0,  10,0,  'naive');
+  stage.line(0,5,  10,10, 'naive');
+  stage.line(0,10, 10,20, 'naive');
+  stage.line(0,15, 5,25,  'naive');
+  stage.line(0,20, 0,30,  'naive');
+#+end_src
+
+Although there is nothing wrong with the horizontal line, lines that
+have a slope get progressively worse. I.e. gaps start to occur. When
+the $x$-coordinates are the same no line is drawn at all, because of
+a division by zero.
+
+#+name: line
+#+begin_src js :exports code :tangle js/line.js :noweb yes
+  (function($){
+      <<line.naive>>
+
+      var algorithms = {};
+      algorithms['naive'] = naive;
+
+      $.prototype.line = function(x0, y0, x1, y1, algorithm) {
+          algorithm = algorithm || 'naive';
+          algorithms[algorithm].bind(this)(x0, y0, x1, y1);
+
+      };
+  })(Stage);
+#+end_src
 
 The entire =line= specification.
 
@@ -415,6 +481,7 @@ our document.
 
 <!-- include source files here... -->
 <script type="text/javascript" src="js/Stage.js"></script>
+<script type="text/javascript" src="js/line.js"></script>
 
 <!-- include spec files here... -->
 <script type="text/javascript" src="spec/SetupSpec.js"></script>
@@ -466,4 +533,5 @@ achieved with a verbatim html block.
 
 #+begin_html
 <script type="text/javascript" src="js/examples/first-appearance.js"></script>
+<script type="text/javascript" src="js/examples/naive-line.js"></script>
 #+end_html

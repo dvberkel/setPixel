@@ -146,6 +146,64 @@ method.
 
 Next up is the =setPixel= method.
 
+For our specification we our going to look into the image data of the
+=context= of the =canvas= that is added to the document.
+
+We first setup a stage.
+
+#+name: spec.stage.setPixel.given
+#+begin_src js :exports code :tangle no
+  var stage = new Stage(1, 1);
+  stage.appendTo(container);
+#+end_src
+
+Then we act upon it.
+
+#+name: spec.stage.setPixel.when
+#+begin_src js :exports code :tangle no
+  stage.setPixel(0, 0);
+#+end_src
+
+Then we verify that the pixel is set. Because the canvas API does not
+provide a means to read individual pixels we need to great lengths to
+verify correct operation.
+
+We first retrieve the =canvas= that was added to the container. We
+ask the =canvas= for its =context=. From the =context= we retrieve
+the image data.
+
+#+name: spec.stage.setPixel.then.imageData
+#+begin_src js :exports code :tangle no
+  var c = container.getElementsByTagName('canvas')[0];
+  var ctx = c.getContext('2d');
+  var image = ctx.getImageData(0, 0, 1, 1);
+#+end_src
+
+The =image= contains a =data= property that holds the pixel
+information. Foreach pixel the red, green, blue and alpha values are
+listed in that order.
+
+#+name: spec.stage.setPixel.then.check
+#+begin_src js :exports code :tangle no :noweb yes
+  expect(image.data[0]).toBe(0);
+  expect(image.data[1]).toBe(0);
+  expect(image.data[2]).toBe(0);
+  expect(image.data[3]).toBe(255);
+#+end_src
+
+
+#+name: spec.stage.setPixel
+#+begin_src js :exports code :tangle no :noweb yes
+  it('must set a pixel to black', function(){
+      <<spec.stage.setPixel.given>>
+
+      <<spec.stage.setPixel.when>>
+
+      <<spec.stage.setPixel.then.imageData>>
+      <<spec.stage.setPixel.then.check>>
+  });
+#+end_src
+
 For each context that is known we want to set a pixel. The =canvas=
 API does not provide setting individual pixels. So we are filling a
 1x1 rectangle.
@@ -203,6 +261,12 @@ In case you are wondering the entire specification looks like
           <<spec.stage.appendTo.creates_canvas>>
 
           <<spec.stage.appendTo.canvas_dimensions>>
+      });
+
+      describe('setPixel', function(){
+          <<spec.stage.appendTo.setup_teardown>>
+
+          <<spec.stage.setPixel>>
       });
   });
 #+end_src

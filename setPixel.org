@@ -355,7 +355,22 @@ So far so good. But what do we expect from this call?
 
 ** Naive line drawing
 
-A naive implementation would be
+The equation for a line is
+
+\[
+a'x + b'y = c'
+\]
+
+If the line is not vertical this can be simplified into the more
+familiar form
+
+\[
+y = ax + b
+\]
+
+where $a = \frac{a'}{b'}$ and $b = -\frac{c'}{b'}$.
+
+We could implement that naively in the following way.
 
 #+name: line.naive
 #+begin_src js :exports code :tangle no :noweb yes
